@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AS/NZS 4268:2017 轉報告與測試評估智慧導航系統</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=300;400;500;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- 頂部導航欄 -->
+    <header class="bg-gradient-to-r from-blue-900 to-indigo-950 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <!-- 官方 Logo 容器 -->
+                <div class="bg-white p-1.5 rounded-lg shadow-inner flex items-center justify-center">
+                    <!-- 載入實體圖片，若加載失敗則自動顯示 SVG 向量備份 -->
+                    <img src="Sporton Logo-basic.png" alt="Sporton Logo" class="h-10 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('header-svg-logo').classList.remove('hidden');">
+                    <!-- 精準繪製的向量 SVG Fallback Logo -->
+                    <svg id="header-svg-logo" class="w-10 h-10 hidden" viewBox="0 0 130 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="38" cy="50" rx="32" ry="48" fill="#004B97" />
+                        <ellipse cx="92" cy="50" rx="32" ry="48" fill="#009A44" />
+                        <g fill="#FFFFFF">
+                            <polygon points="65,15 61,22 69,22" />
+                            <polygon points="65,21 57,28 73,28" />
+                            <polygon points="65,27 53,34 77,34" />
+                            <polygon points="65,33 49,40 81,40" />
+                            <polygon points="65,39 45,46 85,46" />
+                            <polygon points="65,45 41,52 89,52" />
+                            <polygon points="65,51 37,58 93,58" />
+                            <polygon points="65,57 33,64 97,64" />
+                            <polygon points="65,63 29,70 101,70" />
+                            <polygon points="65,69 25,76 105,76" />
+                            <polygon points="65,75 21,82 109,82" />
+                        </g>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide">SPORTON LAB.</h1>
+                    <p class="text-xs text-blue-200">AS/NZS 4268 : 2017 轉報告與測試評估系統 v1.18</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-blue-100 bg-blue-800/40 px-3 py-1.5 rounded-full border border-blue-700/50">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>標準版本對比：完全同步 2026.04.07 最新修訂</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- 左側：主互動控制台與評估引導 (佔 8 欄) -->
+        <section class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- 導航分頁 -->
+            <div class="bg-white p-2.5 rounded-xl shadow-sm border border-slate-200 flex flex-wrap gap-1">
+                <button onclick="switchTab('wizard')" id="tab-wizard" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow-sm">
+                    ⚡ 智慧評估與規格篩選
+                </button>
+                <button onclick="switchTab('matrix')" id="tab-matrix" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-100">
+                    📋 轉報告三大評估矩陣
+                </button>
+                <button onclick="switchTab('dfs')" id="tab-dfs" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-100">
+                    📡 DFS 測試要求細節
+                </button>
+                <button onclick="switchTab('sixg')" id="tab-sixg" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-100">
+                    📶 6GHz 測試頻道矩陣
+                </button>
+                <button onclick="switchTab('retest')" id="tab-retest" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-100">
+                    🛠️ 重新測試評估方式
+                </button>
+                <button onclick="switchTab('flow')" id="tab-flow" class="tab-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-100">
+                    🌿 互動決策流程圖 (Page 7)
+                </button>
+            </div>
+
+            <!-- 分頁1: 智慧評估導航 -->
+            <div id="content-wizard" class="tab-content block">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-slate-200">
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <span class="p-1.5 bg-blue-600 text-white rounded-lg text-xs">STEP</span>
+                            官方規格對比與智慧判定
+                        </h2>
+                        <p class="text-sm text-slate-500 mt-1">完全同步 PDF 記載之 2.4G & 5G 轉報告評估方式、6G 測項及 Page 5 之 80+80M 跨頻段與跨頻段 Note 限制。</p>
+                    </div>
+                    
+                    <div class="p-6 space-y-6">
+                        <!-- 產品支援規格組合 (對應 PDF 第 3 頁) -->
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2.5 flex items-center gap-1.5">
+                                <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span>
+                                A. 產品支援規格組合模式 (精準對比 PDF Page 3)
+                            </label>
+                            <select id="product-mode-select" onchange="onProductModeChange()" class="w-full p-3 rounded-xl border border-slate-300 bg-white text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+                                <option value="mode1">支援 2.4GHz + 5GHz Band 1 ~ 4 (基本組合)</option>
+                                <option value="mode2">支援 2.4GHz + 5GHz Band 1 ~ 4 + 5GHz 跨 Band (5720M/5710M/5690M)</option>
+                                <option value="mode3">支援 2.4GHz + 5GHz Band 1 ~ 4 + 跨 Band/非跨 Band 80+80M or 160M (B1~B4)</option>
+                                <option value="mode4">支援 2.4GHz + 5GHz Band 1 ~ 4 + 80+80M or 160M (B1~B3)</option>
+                                <option value="mode5">支援 2.4GHz + 5GHz Band 1 ~ 4 + 5GHz 跨 Band + 80+80M or 160M (B1~B3)</option>
+                            </select>
+                        </div>
+
+                        <!-- 頻段微調選擇 -->
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/60">
+                            <span class="block text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">細部頻帶手動確認 (會連動調整)：</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="chk-24g" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <span class="text-xs font-semibold">2.4GHz</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="chk-b1" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <span class="text-xs font-semibold">5GHz B1</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="chk-b2" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <span class="text-xs font-semibold">5GHz B2 (DFS)</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="chk-b3" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <span class="text-xs font-semibold">5GHz B3 (DFS)</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="chk-b4" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <span class="text-xs font-semibold">5GHz B4</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" id="chk-cross" class="w-4 h-4 text-blue-600 rounded">
+                                    <span class="text-xs font-semibold text-blue-700">5G 跨 Band 頻道</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer col-span-1">
+                                    <input type="checkbox" id="chk-combo-b4" class="w-4 h-4 text-blue-600 rounded">
+                                    <span class="text-xs font-semibold text-rose-700">80+80M 跨 B4 組合</span>
+                                </label>
+
+                                <!-- 6GHz 頻段操作單選分流 (UNII-5 vs UNII 5~7) -->
+                                <div class="col-span-2 sm:col-span-4 flex flex-col gap-1.5 bg-indigo-50/50 p-2.5 rounded-lg border border-indigo-100 mt-2">
+                                    <span class="text-[10px] font-bold text-indigo-700 uppercase tracking-wide">6GHz 頻段支援（精準對比 PDF 第 4 頁）</span>
+                                    <div class="flex flex-wrap gap-4">
+                                        <label class="flex items-center gap-1.5 cursor-pointer">
+                                            <input type="radio" name="rad-6g" id="rad-6g-none" checked onchange="on6GSelectionChange()" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                            <span class="text-xs font-medium text-slate-500">無 6GHz 支援</span>
+                                        </label>
+                                        <label class="flex items-center gap-1.5 cursor-pointer">
+                                            <input type="radio" name="rad-6g" id="rad-6g-unii5" onchange="on6GSelectionChange()" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                            <span class="text-xs font-semibold text-indigo-700">僅使用 UNII-5 (5925~6425 MHz)</span>
+                                        </label>
+                                        <label class="flex items-center gap-1.5 cursor-pointer">
+                                            <input type="radio" name="rad-6g" id="rad-6g-unii57" onchange="on6GSelectionChange()" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                            <span class="text-xs font-semibold text-indigo-950">使用 UNII 5~7 (5925~6585 MHz)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 報告與應用模式 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span>
+                                    B. 現有可提供的完整射頻報告
+                                </label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-all">
+                                        <input type="radio" name="source-report" value="both" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                        <span class="text-sm text-slate-700">同時擁有 CE (ETSI) 及 FCC 報告</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-all">
+                                        <input type="radio" name="source-report" value="ce" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                        <span class="text-sm text-slate-700">僅有 CE (ETSI) 報告</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-all">
+                                        <input type="radio" name="source-report" value="fcc" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                        <span class="text-sm text-slate-700">僅有 FCC 報告</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-all">
+                                        <input type="radio" name="source-report" value="none" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                        <span class="text-sm text-slate-700 font-semibold text-rose-600">無現成報告 (完全全新測試)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-3 flex items-center gap-1.5">
+                                    <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span>
+                                    C. 產品應用安裝類型
+                                </label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-all">
+                                        <input type="radio" name="device-type" value="indoor" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                        <span class="text-sm text-slate-700">室內型設備 (Indoor Device Only)</span>
+                                    </label>
+                                    <label class="flex items-center gap-3 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer transition-all">
+                                        <input type="radio" name="device-type" value="outdoor" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                        <span class="text-sm text-slate-700">室外型 / 混合型 (Outdoor / Indoor+Outdoor)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 智慧計算按鈕 -->
+                        <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
+                            <span class="text-xs text-slate-400">所有邏輯判定皆完全鎖定 C-tick 與 AS/NZS 4268 標準對應。</span>
+                            <button onclick="calculateEvaluation()" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold text-sm hover:bg-blue-700 transition-all flex items-center gap-2 shadow-md hover:shadow-lg active:scale-95">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                執行法規評估判定
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 智慧評估結果看板 -->
+                <div id="wizard-result-card" class="mt-6 bg-white rounded-2xl shadow-md border-2 border-emerald-500 overflow-hidden hidden transition-all duration-300">
+                    <div class="p-5 bg-gradient-to-r from-emerald-50 to-teal-50 border-b border-emerald-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-sm">✓</span>
+                            <div>
+                                <h3 class="font-bold text-slate-900">Sporton 智慧法規評估報告</h3>
+                                <p class="text-xs text-slate-500">依據 AS/NZS 4268 轉報告與測試指南評估</p>
+                            </div>
+                        </div>
+                        <span id="result-badge-method" class="px-3 py-1 bg-emerald-600 text-white rounded-full text-xs font-bold tracking-wider">轉報告評估方式 1</span>
+                    </div>
+
+                    <div class="p-6 space-y-6">
+                        <!-- 第一部分：各頻段 analysis -->
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                📍 各頻帶射頻評估決策與測試狀態
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-600">
+                                            <th class="py-2.5 px-3 font-semibold">支援頻帶</th>
+                                            <th class="py-2.5 px-3 font-semibold">對應應用/類別</th>
+                                            <th class="py-2.5 px-3 font-semibold">RF 評估方式</th>
+                                            <th class="py-2.5 px-3 font-semibold">DFS 評估方式</th>
+                                            <th class="py-2.5 px-3 font-semibold text-center">是否需測試</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="result-table-body" class="divide-y divide-slate-100 text-slate-700">
+                                        <!-- 動態插入 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 第二部分：DFS 測試與限制細節 (條件顯示) -->
+                        <div id="result-dfs-section" class="p-4 bg-amber-50/70 border border-amber-200 rounded-xl space-y-3">
+                            <h4 class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                DFS 行為模式與頻帶屏蔽警示細節 (Band 3 特殊限制)
+                            </h4>
+                            <ul id="result-dfs-list" class="text-xs text-amber-800 space-y-1.5 list-disc list-inside">
+                                <!-- 動態插入 -->
+                            </ul>
+                        </div>
+
+                        <!-- 第三部分：重新測試 / 補測細節 -->
+                        <div id="result-retest-section" class="p-4 bg-blue-50 border border-blue-200 rounded-xl space-y-2 hidden">
+                            <h4 class="text-xs font-bold text-blue-900 flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                🔍 重新測試 / 加測項目說明
+                            </h4>
+                            <p id="result-retest-desc" class="text-xs text-blue-800 leading-relaxed">
+                                <!-- 動態插入 -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分頁2: 轉報告評估方式矩陣 -->
+            <div id="content-matrix" class="tab-content hidden space-y-6">
+                <!-- 轉報告評估方式 1 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <span class="font-bold text-slate-800">轉報告評估方式 1 (適用於 CE (EN 301 893 V2.1.1/V2.2.1) 報告移轉)</span>
+                        <span class="px-2.5 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">主推 CE 轉報告</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                                    <th class="p-3">頻帶 (MHz)</th>
+                                    <th class="p-3">應用與類別</th>
+                                    <th class="p-3">RF 評估方式</th>
+                                    <th class="p-3">DFS 評估方式</th>
+                                    <th class="p-3 text-center">是否需測試</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-700">
+                                <tr>
+                                    <td class="p-3 font-semibold">2400 ~ 2483.5</td>
+                                    <td class="p-3">In/Outdoor | Digital/FHSS</td>
+                                    <td class="p-3">使用 FCC or CE 報告符合</td>
+                                    <td class="p-3">--</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">5150 ~ 5250 (B1)</td>
+                                    <td class="p-3">Indoor | RLAN</td>
+                                    <td class="p-3">使用 CE 報告符合</td>
+                                    <td class="p-3">--</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">5250 ~ 5350 (B2)</td>
+                                    <td class="p-3">Indoor | RLAN</td>
+                                    <td class="p-3">使用 CE 報告符合</td>
+                                    <td class="p-3">使用 CE 報告符合</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">5470 ~ 5725 (B3)</td>
+                                    <td class="p-3">In/Outdoor | RLAN</td>
+                                    <td class="p-3 text-blue-700 font-medium">使用 CE 報告符合 (EN 301 893 V2.2.1/V2.1.1)</td>
+                                    <td class="p-3 text-rose-700 font-medium">請參考 DFS 評估方式 1</td>
+                                    <td class="p-3 text-center text-rose-600 font-bold">是</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">5725 ~ 5850 (B4)</td>
+                                    <td class="p-3">In/Outdoor | Digital</td>
+                                    <td class="p-3">使用 FCC 報告符合</td>
+                                    <td class="p-3">--</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 轉報告評估方式 2 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <span class="font-bold text-slate-800">轉報告評估方式 2 (適用於 FCC 報告移轉)</span>
+                        <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded text-xs font-semibold">主推 FCC 轉報告</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                                    <th class="p-3">頻帶 (MHz)</th>
+                                    <th class="p-3">應用與類別</th>
+                                    <th class="p-3">RF 評估方式</th>
+                                    <th class="p-3">DFS 評估方式</th>
+                                    <th class="p-3 text-center">是否需測試 / 重測說明</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-700">
+                                <tr>
+                                    <td class="p-3 font-semibold">2400 ~ 2483.5</td>
+                                    <td class="p-3">In/Outdoor | Digital/FHSS</td>
+                                    <td class="p-3">使用 FCC or CE 報告符合</td>
+                                    <td class="p-3">--</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-rose-700">5150 ~ 5250 (B1)</td>
+                                    <td class="p-3">In/Outdoor | RLAN</td>
+                                    <td class="p-3">使用 FCC 報告符合</td>
+                                    <td class="p-3">--</td>
+                                    <td class="p-3 text-center text-rose-600 font-bold">是, 重新測試 EIRP & 30度仰角 EIRP</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-rose-700">5250 ~ 5350 (B2)</td>
+                                    <td class="p-3">Indoor | RLAN</td>
+                                    <td class="p-3">使用 FCC 報告符合</td>
+                                    <td class="p-3">使用 FCC/IC 方式符合</td>
+                                    <td class="p-3 text-center text-rose-600 font-bold">是, 須下降 Power & PSD(重)測</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-rose-700">5470 ~ 5725 (B3)</td>
+                                    <td class="p-3">In/Outdoor | RLAN (含跨頻段)</td>
+                                    <td class="p-3">使用 FCC 報告符合</td>
+                                    <td class="p-3">請參考 DFS 評估方式 2</td>
+                                    <td class="p-3 text-center text-rose-600 font-bold">是</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">5725 ~ 5850 (B4)</td>
+                                    <td class="p-3">In/Outdoor | Digital</td>
+                                    <td class="p-3">使用 FCC 報告符合</td>
+                                    <td class="p-3">--</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 轉報告評估方式 3 -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <span class="font-bold text-slate-800">轉報告評估方式 3 (適用於跨頻段且同時備有 FCC 與 CE 報告之產品)</span>
+                        <span class="px-2.5 py-1 bg-purple-100 text-purple-800 rounded text-xs font-semibold">推薦跨頻段混合模式</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-600 border-b border-slate-200">
+                                    <th class="p-3">頻帶 (MHz)</th>
+                                    <th class="p-3">類別</th>
+                                    <th class="p-3">評估方式</th>
+                                    <th class="p-3">DFS 評估方式</th>
+                                    <th class="p-3 text-center">是否需測試 / 重測說明</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-slate-700">
+                                <tr>
+                                    <td class="p-3 font-semibold">2400 ~ 2483.5</td>
+                                    <td class="p-3">Digital/FHSS</td>
+                                    <td class="p-3">使用 FCC or CE 報告符合</td>
+                                    <td class="p-3">--</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">5150 ~ 5250 (B1)</td>
+                                    <td class="p-3">RLAN</td>
+                                    <td class="p-3">使用 CE 報告符合</td>
+                                    <td class="p-3">--</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">5250 ~ 5350 (B2)</td>
+                                    <td class="p-3">RLAN</td>
+                                    <td class="p-3">使用 CE 報告符合</td>
+                                    <td class="p-3">使用 CE 報告符合</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-rose-700">5470 ~ 5725 (B3)</td>
+                                    <td class="p-3">RLAN (含跨 Band Channel)</td>
+                                    <td class="p-3">使用 FCC 報告符合</td>
+                                    <td class="p-3">請參考 DFS 評估方式 3</td>
+                                    <td class="p-3 text-center text-rose-600 font-bold">是 (因 FCC 室內 DFS 僅測 Band 2，Band 3 DFS 須重測)</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold">5725 ~ 5850 (B4)</td>
+                                    <td class="p-3">Digital</td>
+                                    <td class="p-3">使用 FCC 報告符合</td>
+                                    <td class="p-3">--</td>
+                                    <td class="p-3 text-center text-emerald-600 font-bold">否</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分頁3: DFS 測試細節對照 -->
+            <div id="content-dfs" class="tab-content hidden space-y-6">
+                <!-- DFS 模式 1 (CE 轉 C-tick) -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-5 py-4 bg-slate-50 border-b border-slate-200">
+                        <h3 class="font-bold text-slate-800">DFS 評估方式 1 (CE 轉 C-tick)</h3>
+                        <p class="text-xs text-slate-500 mt-1">適用於 Indoor (Band 2 + 3) 或 Outdoor (Band 3) 設備</p>
+                    </div>
+                    <div class="p-4 space-y-4">
+                        <div class="overflow-x-auto text-xs">
+                            <table class="w-full text-left border border-slate-200">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="p-2 border">應用頻段</th>
+                                        <th class="p-2 border">頻寬 (MHz)</th>
+                                        <th class="p-2 border">原測試頻率 (CE)</th>
+                                        <th class="p-2 border">C-tick DFS 轉移判定</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="p-2 border font-medium">5250 ~ 5350 MHz (Band 2)</td>
+                                        <td class="p-2 border">20 / 40 / 80 / 160</td>
+                                        <td class="p-2 border">5300, 5290, 5250</td>
+                                        <td class="p-2 border text-emerald-700 font-bold">使用 CE 報告符合</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 border font-medium text-amber-700">5470 ~ 5725 MHz (Band 3)</td>
+                                        <td class="p-2 border">20 / 40 / 80 / 160</td>
+                                        <td class="p-2 border">5500, 5620, 5530, 5610, 5570</td>
+                                        <td class="p-2 border text-rose-700">
+                                            <strong>移除：</strong> 5610/5620/5570 MHz (氣象雷達保護)<br>
+                                            <strong>加測：</strong> 行為模式加測 5530 MHz (BW: 80MHz)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DFS 模式 2 (FCC 轉 C-tick) -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="px-5 py-4 bg-slate-50 border-b border-slate-200">
+                        <h3 class="font-bold text-slate-800">DFS 評估方式 2 (FCC / IC 轉 C-tick)</h3>
+                    </div>
+                    <div class="p-4 space-y-4 text-xs">
+                        <div class="bg-amber-50 p-3 rounded-lg border border-amber-200 text-amber-900 mb-3">
+                            <strong>⚠️ 氣象雷達防禦限值 (Note 1 & 2)：</strong><br>
+                            1. C-tick Band 3 DFS 不可以使用 <strong>5570 MHz</strong>。<br>
+                            2. Indoor+Outdoor & Outdoor 設備在 Band 3 必須<strong>加測 5530 MHz (BW: 80MHz) 行為模式</strong>。
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border border-slate-200">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="p-2 border">來源標準</th>
+                                        <th class="p-2 border">對應頻帶 (MHz)</th>
+                                        <th class="p-2 border">測試項目</th>
+                                        <th class="p-2 border">轉 C-tick 評估判定</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="p-2 border font-semibold">FCC 轉 C-tick</td>
+                                        <td class="p-2 border">5250 ~ 5350 (B2)</td>
+                                        <td class="p-2 border">偵測率與行為模式</td>
+                                        <td class="p-2 border text-emerald-600 font-bold">使用 FCC 報告符合</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 border font-semibold">FCC 轉 C-tick</td>
+                                        <td class="p-2 border text-amber-700">5470 ~ 5725 (B3)</td>
+                                        <td class="p-2 border">偵測率 & 行為模式</td>
+                                        <td class="p-2 border text-rose-700">
+                                            <strong>偵測率：</strong>除 5570 屏蔽外，使用 FCC 報告符合<br>
+                                            <strong>行為模式：</strong>加測 5530 MHz (Note 2)
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-indigo-50/20">
+                                        <td class="p-2 border font-semibold text-indigo-900">IC 轉 C-tick</td>
+                                        <td class="p-2 border">B2 (5250~5350) / B3 (5470~5725)</td>
+                                        <td class="p-2 border">偵測率與行為模式</td>
+                                        <td class="p-2 border text-indigo-700 font-bold">直接使用 IC 報告符合 (無須額外物理測試)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分頁4: 6GHz 測試頻道矩陣 -->
+            <div id="content-sixg" class="tab-content hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="border-b border-slate-100 pb-4 mb-4">
+                        <h3 class="text-lg font-bold text-slate-900">6GHz Bands (5925~6425 / 6585 MHz) 互動測試評估</h3>
+                        <p class="text-sm text-slate-500 mt-1">
+                            精準對比 PDF 第 4 與第 5 頁，包含 20M/40M/80M/160M/320M 所有實測頻道與「藍色 Channel」標示。
+                        </p>
+                    </div>
+
+                    <!-- 6GHz 頻段操作過濾器 -->
+                    <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider flex items-center gap-1">
+                                <span>📡 6GHz 測試範圍過濾器</span>
+                                <span class="text-[10px] bg-indigo-200 text-indigo-800 px-1.5 py-0.5 rounded">智慧動態</span>
+                            </h4>
+                            <p class="text-[11px] text-indigo-700 mt-0.5">根據硬體操作範圍自動篩選法規測項與頻率對照表。</p>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-white p-1 rounded-lg border border-slate-200 shadow-sm self-start sm:self-auto">
+                            <button onclick="filter6GTable('unii5')" id="btn-filter-unii5" class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-indigo-600 text-white shadow-sm">
+                                僅限 UNII-5 (5925~6425 MHz)
+                            </button>
+                            <button onclick="filter6GTable('unii57')" id="btn-filter-unii57" class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-slate-600 hover:bg-slate-100">
+                                完整 UNII 5~7 (5925~6585 MHz)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 動態提示 -->
+                    <div id="unii-filter-alert" class="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-800 mb-4">
+                        <strong>💡 提示</strong>：系統預設對比所有符合 AS/NZS 4268 的測試頻道數據。
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <button onclick="select6GMethod(1)" id="btn-6g-m1" class="p-4 rounded-xl border text-left transition-all bg-blue-50 border-blue-500 ring-2 ring-blue-500/20">
+                            <span class="font-bold text-blue-900 block text-sm">方式 1 (使用 CE)</span>
+                            <span class="text-xs text-blue-700 block mt-1">使用 CE 報告符合，不用額外產出 C-tick 報告，無須測試。</span>
+                        </button>
+                        <button onclick="select6GMethod(2)" id="btn-6g-m2" class="p-4 rounded-xl border text-left transition-all border-slate-200 hover:bg-slate-50">
+                            <span class="font-bold text-slate-900 block text-sm">方式 2 (欲提升功率)</span>
+                            <span class="text-xs text-slate-500 block mt-1">LPI EIRP 欲提升至 23.98 dBm，需傳導所有項目重新測試 (RSE 需重估)。</span>
+                        </button>
+                        <button onclick="select6GMethod(3)" id="btn-6g-m3" class="p-4 rounded-xl border text-left transition-all border-slate-200 hover:bg-slate-50">
+                            <span class="font-bold text-slate-900 block text-sm">使用 FCC 報告轉移</span>
+                            <span class="text-xs text-slate-500 block mt-1">確認所有 channel EIRP/PSD 是否符合澳洲限制值，並加測標示為「藍色」的頻道。</span>
+                        </button>
+                    </div>
+
+                    <!-- 6G 測試頻道與測項矩陣 (精準對比 PDF & 支援扁平化篩選) -->
+                    <div id="sixg-matrix-area" class="space-y-4">
+                        <div class="overflow-x-auto custom-scroll">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                                        <th class="p-2.5 font-bold border">頻寬 (BW)</th>
+                                        <th class="p-2.5 font-bold border">子頻段 (Band)</th>
+                                        <th class="p-2.5 font-bold border">測試頻道 (CH)</th>
+                                        <th class="p-2.5 font-bold border">中心頻率 (MHz)</th>
+                                        <th class="p-2.5 font-bold border text-center">EIRP / PSD / EBW / Harmonic / MASK</th>
+                                        <th class="p-2.5 font-bold border text-center">Band Edge (BE)</th>
+                                        <th class="p-2.5 font-bold border">備註 / 標記</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-slate-600">
+                                    <!-- 20M -->
+                                    <tr class="hover:bg-slate-50 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">20 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold">1</td>
+                                        <td class="p-2 border">5955</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-slate-400">基本測試頻道</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">20 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold text-blue-600">49 / 93</td>
+                                        <td class="p-2 border">6195 / 6415</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-slate-300">--</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-bold">藍色 Channel</span></td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 bg-blue-50/20 unii67-row">
+                                        <td class="p-2 border font-bold text-indigo-900">20 MHz</td>
+                                        <td class="p-2 border text-indigo-700">UNII 6 / 7</td>
+                                        <td class="p-2 border font-semibold text-indigo-700">97 / 105 / 113 / 121 / 125</td>
+                                        <td class="p-2 border text-indigo-700">6435 ~ 6575</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V (僅125)</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-200 text-blue-900 rounded text-[10px] font-bold">藍色 Channel (重測)</span></td>
+                                    </tr>
+                                    <!-- 40M -->
+                                    <tr class="hover:bg-slate-50 border-t-2 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">40 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold">3</td>
+                                        <td class="p-2 border">5965</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-slate-400">基本測試頻道</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">40 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold text-blue-600">51 / 91</td>
+                                        <td class="p-2 border">6205 / 6405</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-slate-300">--</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-bold">藍色 Channel</span></td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 bg-blue-50/20 unii67-row">
+                                        <td class="p-2 border font-bold text-indigo-900">40 MHz</td>
+                                        <td class="p-2 border text-indigo-700">UNII 6 / 7</td>
+                                        <td class="p-2 border font-semibold text-indigo-700">99 / 107 / 115 / 123</td>
+                                        <td class="p-2 border text-indigo-700">6445 ~ 6565</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V (僅123)</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-200 text-blue-900 rounded text-[10px] font-bold">藍色 Channel (重測)</span></td>
+                                    </tr>
+                                    <!-- 80M -->
+                                    <tr class="hover:bg-slate-50 border-t-2 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">80 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold">7</td>
+                                        <td class="p-2 border">5985</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-slate-400">基本測試頻道</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">80 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold text-blue-600">55 / 87</td>
+                                        <td class="p-2 border">6225 / 6385</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-slate-300">--</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-bold">藍色 Channel</span></td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 bg-blue-50/20 unii67-row">
+                                        <td class="p-2 border font-bold text-indigo-900">80 MHz</td>
+                                        <td class="p-2 border text-indigo-700">UNII 6 / 7</td>
+                                        <td class="p-2 border font-semibold text-indigo-700">103 / 119</td>
+                                        <td class="p-2 border text-indigo-700">6465 / 6545</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-slate-300">--</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-200 text-blue-900 rounded text-[10px] font-bold">藍色 Channel (重測)</span></td>
+                                    </tr>
+                                    <!-- 160M -->
+                                    <tr class="hover:bg-slate-50 border-t-2 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">160 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold">15</td>
+                                        <td class="p-2 border">6025</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-slate-400">基本測試頻道</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">160 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold text-blue-600">47 / 79</td>
+                                        <td class="p-2 border">6185 / 6345</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-slate-300">--</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-bold">藍色 Channel</span></td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 bg-blue-50/20 unii67-row">
+                                        <td class="p-2 border font-bold text-indigo-900">160 MHz</td>
+                                        <td class="p-2 border text-indigo-700">UNII 6 / 7</td>
+                                        <td class="p-2 border font-semibold text-indigo-700">111</td>
+                                        <td class="p-2 border text-indigo-700">6505</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-slate-300">--</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-200 text-blue-900 rounded text-[10px] font-bold">藍色 Channel (重測)</span></td>
+                                    </tr>
+                                    <!-- 320M -->
+                                    <tr class="hover:bg-slate-50 border-t-2 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">320 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold">31</td>
+                                        <td class="p-2 border">6105</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-slate-400">基本測試頻道</td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 unii5-row">
+                                        <td class="p-2 border font-bold text-blue-600">320 MHz</td>
+                                        <td class="p-2 border">UNII 5</td>
+                                        <td class="p-2 border font-semibold text-blue-600">63</td>
+                                        <td class="p-2 border">6265</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-slate-300">--</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded text-[10px] font-bold">藍色 Channel</span></td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 bg-blue-50/20 unii67-row">
+                                        <td class="p-2 border font-bold text-indigo-900">320 MHz</td>
+                                        <td class="p-2 border text-indigo-700">UNII 5 / 6 / 7</td>
+                                        <td class="p-2 border font-semibold text-indigo-700">95</td>
+                                        <td class="p-2 border text-indigo-700">6425</td>
+                                        <td class="p-2 border text-center text-emerald-600 font-bold">V</td>
+                                        <td class="p-2 border text-center text-slate-300">--</td>
+                                        <td class="p-2 border"><span class="px-1.5 py-0.5 bg-blue-200 text-blue-900 rounded text-[10px] font-bold">藍色 Channel (重測)</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- CBP Test Channels (完全一致) -->
+                        <div class="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="font-bold text-slate-800 text-xs block mb-2">📡 CBP (Contention-Based Protocol) 測試特定頻道及頻寬對照：</span>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                <div class="bg-white p-3 rounded-lg shadow-sm border border-slate-100">
+                                    <strong class="text-blue-900 block mb-1">Bandwidth 20MHz</strong>
+                                    <ul class="list-disc list-inside space-y-1 text-slate-600">
+                                        <li class="unii5-cbp font-medium text-slate-700">UNII 5: CH 53 (6215 MHz)</li>
+                                        <li class="unii67-cbp font-semibold text-indigo-900">UNII 6: CH 101 (6455 MHz) <span class="text-[10px] bg-indigo-100 px-1 py-0.2 rounded">藍色頻道</span></li>
+                                        <li class="unii67-cbp font-semibold text-indigo-900">UNII 7: CH 121 (6555 MHz) <span class="text-[10px] bg-indigo-100 px-1 py-0.2 rounded">藍色頻道</span></li>
+                                    </ul>
+                                </div>
+                                <div class="bg-white p-3 rounded-lg shadow-sm border border-slate-100">
+                                    <strong class="text-indigo-900 block mb-1">Bandwidth 320MHz</strong>
+                                    <ul class="list-disc list-inside space-y-1 text-slate-600">
+                                        <li class="unii5-cbp font-medium text-slate-700">UNII 5: CH 31 (6105 MHz)</li>
+                                        <li class="unii67-cbp font-semibold text-indigo-900">UNII 5/6/7: CH 95 (6425 MHz) <span class="text-[10px] bg-indigo-100 px-1 py-0.2 rounded">藍色頻道</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分頁5: 重新測試評估方式 (完全符合 AS/NZS 4268) -->
+            <div id="content-retest" class="tab-content hidden space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <h3 class="text-base font-bold text-slate-900 mb-4">AS/NZS 4268 重新測試/物理評估方式 (完全符合模式對照表)</h3>
+                    
+                    <div class="space-y-4">
+                        <!-- A系列 (EN 300 440) -->
+                        <div class="border border-slate-200 rounded-lg overflow-hidden">
+                            <div class="bg-slate-50 px-4 py-2.5 font-semibold text-xs text-slate-700 border-b border-slate-200 flex justify-between">
+                                <span>A 系列模式：參照 EN 300 440 測試方式</span>
+                                <span class="text-blue-600">適用 2.4G & 5G 頻段</span>
+                            </div>
+                            <div class="p-4 space-y-3 text-xs text-slate-600">
+                                <div class="grid grid-cols-3 gap-2 font-semibold text-slate-800 border-b border-slate-100 pb-2">
+                                    <span>模式</span>
+                                    <span>對應頻段 (Frequency Band)</span>
+                                    <span>說明</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-start py-1">
+                                    <span class="font-bold text-blue-600">A1</span>
+                                    <span>2.4GHz (WLAN/BT)</span>
+                                    <span class="space-y-1">
+                                        <p>1. 所有測項與限制值參照 AS/NZS 4268</p>
+                                        <p class="text-indigo-600 font-bold">2. 須加測 Emission Bandwidth & Operation Freq (Temp: -10°C ~ 55°C)</p>
+                                        <p>3. Output Power 僅需量測常溫</p>
+                                        <p>4. TX/RX Emission 遵循 EN 300 440</p>
+                                    </span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-start py-1 border-t border-slate-100">
+                                    <span class="font-bold text-blue-600">A2</span>
+                                    <span>5GHz Band 1~3 (不含跨頻段)</span>
+                                    <span>同 A1 規範。DFS 須符合 EN 301 893 或 15.407。</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-start py-1 border-t border-slate-100">
+                                    <span class="font-bold text-blue-600">A3</span>
+                                    <span>5GHz Band 4</span>
+                                    <span>同 A1 規範。</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- B系列 (EN 300 328 / EN 301 893) -->
+                        <div class="border border-slate-200 rounded-lg overflow-hidden">
+                            <div class="bg-slate-50 px-4 py-2.5 font-semibold text-xs text-slate-700 border-b border-slate-200 flex justify-between">
+                                <span>B 系列模式：參照 EN 300 328 / EN 301 893 測試方式</span>
+                                <span class="text-emerald-600">適用 2.4G & 5G 頻段</span>
+                            </div>
+                            <div class="p-4 space-y-3 text-xs text-slate-600">
+                                <div class="grid grid-cols-3 gap-2 font-semibold text-slate-800 border-b border-slate-100 pb-2">
+                                    <span>模式</span>
+                                    <span>對應頻段 (Frequency Band)</span>
+                                    <span>說明</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-start py-1">
+                                    <span class="font-bold text-emerald-600">B1</span>
+                                    <span>2.4GHz (WLAN/BT)</span>
+                                    <span>所有測項（含 Adaptivity/Blocking）皆須符合 EN 300 328 標準。</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-start py-1 border-t border-slate-100">
+                                    <span class="font-bold text-emerald-600">B2</span>
+                                    <span>5GHz Band 1~3 (不含跨頻段)</span>
+                                    <span>所有測項（含 DFS/Adaptivity/Blocking）皆須符合 EN 301 893 標準。</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-start py-1 border-t border-slate-100">
+                                    <span class="font-bold text-emerald-600">B3</span>
+                                    <span>5GHz Band 1~3 (不含跨頻段)</span>
+                                    <span class="space-y-1">
+                                        <p>1. 加測 Emission Bandwidth & Op Freq (Temp: -10°C~55°C)</p>
+                                        <p>2. Output Power 僅需常溫測試</p>
+                                        <p>3. TX/RX Emission 遵循 EN 301 893</p>
+                                        <p>4. DFS 須符合 EN 301 893 or 15.407</p>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- C系列 (FCC 15.247 / 15.407) -->
+                        <div class="border border-slate-200 rounded-lg overflow-hidden">
+                            <div class="bg-slate-50 px-4 py-2.5 font-semibold text-xs text-slate-700 border-b border-slate-200 flex justify-between">
+                                <span>C 系列模式：參照 FCC 測試方式</span>
+                                <span class="text-amber-600">適用 2.4G & 5G 頻段</span>
+                            </div>
+                            <div class="p-4 space-y-3 text-xs text-slate-600">
+                                <div class="grid grid-cols-3 gap-2 font-semibold text-slate-800 border-b border-slate-100 pb-2">
+                                    <span>模式</span>
+                                    <span>對應頻段 (Frequency Band)</span>
+                                    <span>說明</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-start py-1">
+                                    <span class="font-bold text-amber-600">C1</span>
+                                    <span>2.4GHz (WLAN/BT)</span>
+                                    <span>1. 所有測項與 Limit 皆須符合 FCC 15.247。<br>2. 天線可使用廠商宣告值。</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-start py-1 border-t border-slate-100">
+                                    <span class="font-bold text-amber-600">C2</span>
+                                    <span>5GHz Band 1~3 (含跨頻段)</span>
+                                    <span>1. 所有測項（含 DFS）皆符合 FCC 15.407。<br>2. 天線可使用宣告值。<br>3. EIRP & PSD Limit 須符合 AS/NZS 4268。</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 items-start py-1 border-t border-slate-100">
+                                    <span class="font-bold text-amber-600">C3</span>
+                                    <span>5GHz Band 4</span>
+                                    <span>1. 所有測項與 Limit 符合 FCC 15.407。<br>2. 天線可使用宣告值。</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分頁6: 決策路徑流程圖 -->
+            <div id="content-flow" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+                    <div class="border-b border-slate-100 pb-4">
+                        <h3 class="text-lg font-bold text-slate-900">澳洲 AS/NZS 4268 符合性評估流程判定</h3>
+                        <p class="text-sm text-slate-500 mt-1">互動式流程判定 model (對應 PDF 第 7 頁)。點選關鍵決策節點可直接查看評估邏輯。</p>
+                    </div>
+
+                    <!-- Flow Nodes Container -->
+                    <div class="flex flex-col items-center gap-6 py-4">
+                        
+                        <!-- Root Node -->
+                        <div class="bg-blue-900 text-white p-4 rounded-xl shadow-md text-center max-w-sm w-full border-2 border-blue-700">
+                            <span class="text-xs uppercase font-bold tracking-widest text-blue-200 block mb-1">起點</span>
+                            <span class="font-bold text-sm block">產品計劃銷往澳洲市場 (Australia)</span>
+                        </div>
+
+                        <!-- Arrow Down -->
+                        <div class="w-0.5 h-6 bg-slate-300"></div>
+
+                        <!-- Decision Node 1 -->
+                        <div class="bg-slate-50 border-2 border-indigo-500 p-5 rounded-2xl shadow-sm max-w-md w-full text-center relative">
+                            <span class="text-xs font-bold text-indigo-600 block mb-2">關鍵判定 1</span>
+                            <p class="text-sm font-bold text-slate-800">產品是否已擁有符合 AS/NZS 4268 標準要求的 ETSI (CE) 或 FCC 測試報告？</p>
+                            
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <button onclick="selectFlowBranch('yes')" class="p-2.5 bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200 rounded-lg text-xs font-bold transition-all">
+                                    是 (YES)
+                                </button>
+                                <button onclick="selectFlowBranch('no')" class="p-2.5 bg-rose-100 text-rose-800 border border-rose-300 hover:bg-rose-200 rounded-lg text-xs font-bold transition-all">
+                                    否 (NO)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Flow Result Window -->
+                        <div id="flow-result-node" class="p-5 bg-slate-50 border border-dashed border-slate-300 rounded-xl max-w-md w-full text-center transition-all duration-300 hidden">
+                            <span class="text-xs font-bold text-slate-500 block mb-1">決策分支路徑</span>
+                            <div id="flow-result-text" class="text-sm text-slate-700 font-medium"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 右側：側邊欄 (佔 4 欄) -->
+        <aside class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- 快選與常用規則備忘錄 (隨時可見) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 space-y-4">
+                <div class="flex items-center gap-2 pb-3 border-b border-slate-100">
+                    <span class="text-lg">💡</span>
+                    <h3 class="font-bold text-slate-900 text-sm">澳洲移轉核心規則與備忘</h3>
+                </div>
+                
+                <div class="space-y-3 text-xs text-slate-600">
+                    <div class="p-3 bg-red-50/50 border border-red-100 rounded-lg">
+                        <strong class="text-red-900 block mb-1">🚫 關閉頻段警告</strong>
+                        澳洲法規（C-Tick）必須關閉並移除 <strong>5600 ~ 5650 MHz</strong>（氣象雷達保護區）的所有運作權限。
+                    </div>
+
+                    <div class="p-3 bg-blue-50/50 border border-blue-100 rounded-lg">
+                        <strong class="text-blue-950 block mb-1">🔀 跨頻段頻道使用規則</strong>
+                        若設備支援跨頻段（例如 5720MHz 20M, 5710MHz 40M, 5690MHz 80M），其 Band 3 必須使用 <strong>FCC 報告進行移轉</strong> 或使用 <strong>EN 規範重新物理測試</strong>。
+                    </div>
+
+                    <div class="p-3 bg-indigo-50/50 border border-indigo-100 rounded-lg">
+                        <strong class="text-indigo-950 block mb-1">🔗 80+80 MHz 跨頻段特定路徑</strong>
+                        若設備支援 80+80MHz 且包含以下頻段組合：
+                        <ul class="list-disc list-inside mt-1 space-y-0.5 text-indigo-900">
+                            <li>Band 1 + Band 4</li>
+                            <li>Band 2 + Band 4</li>
+                            <li>Band 3 + Band 4</li>
+                        </ul>
+                        此類組合<strong>只能使用「轉報告評估方式 2」執行</strong>。
+                    </div>
+
+                    <div class="p-3 bg-amber-50/50 border border-amber-100 rounded-lg">
+                        <strong class="text-amber-950 block mb-1">⚠️ 歐規版本比對注意</strong>
+                        C-Tick 若使用 CE 報告轉移時，請注意 <strong>CE Adaptivity & Receiver Blocking</strong> 歐規版本必須與最新公報 OJ 相符。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 實驗室資訊 card -->
+            <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl shadow-sm p-5 space-y-4">
+                <div class="flex items-center gap-3">
+                    <!-- 官方 Logo 容器 -->
+                    <div class="bg-white p-1 rounded shadow flex items-center justify-center">
+                        <img src="Sporton Logo-basic.png" alt="Sporton Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('aside-svg-logo').classList.remove('hidden');">
+                        <!-- 精準繪製的向量 SVG Fallback Logo -->
+                        <svg id="aside-svg-logo" class="w-8 h-8 hidden" viewBox="0 0 130 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="38" cy="50" rx="32" ry="48" fill="#004B97" />
+                            <ellipse cx="92" cy="50" rx="32" ry="48" fill="#009A44" />
+                            <g fill="#FFFFFF">
+                                <polygon points="65,15 61,22 69,22" />
+                                <polygon points="65,21 57,28 73,28" />
+                                <polygon points="65,27 53,34 77,34" />
+                                <polygon points="65,33 49,40 81,40" />
+                                <polygon points="65,39 45,46 85,46" />
+                                <polygon points="65,45 41,52 89,52" />
+                                <polygon points="65,51 37,58 93,58" />
+                                <polygon points="65,57 33,64 97,64" />
+                                <polygon points="65,63 29,70 101,70" />
+                                <polygon points="65,69 25,76 105,76" />
+                                <polygon points="65,75 21,82 109,82" />
+                            </g>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-sm tracking-wide">SPORTON INTERNATIONAL</h3>
+                </div>
+                <div class="text-xs text-slate-300 space-y-2">
+                    <p class="font-medium text-slate-200">新竹工程與法規諮詢聯絡窗口</p>
+                    <p>地址: 新竹縣竹北市博愛街 724 巷 8 號</p>
+                    <p>TEL: 886-3-656-9065</p>
+                    <p>FAX: 886-3-656-9085</p>
+                    <p class="pt-2 border-t border-white/10 text-slate-400">本智慧評估工具旨在加速前期可行性審查，最終測試報告以專案法規工程師開立之測試計劃為準。</p>
+                </div>
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- 底部資訊 -->
+    <footer class="bg-slate-100 border-t border-slate-200 text-center py-6 mt-12 text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p>© 2026 SPORTON INTERNATIONAL INC. All Rights Reserved.</p>
+            <p>本互動評估器完全依照 Sporton「AS/NZS 4268 : 2017 轉報告與測試評估方式 V1.18」編製。</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript 互動邏輯 -->
+    <script>
+        // 切換主要分頁
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+            const targetContent = document.getElementById(`content-${tabId}`);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+                targetContent.classList.add('block');
+            }
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+            }
+
+            // 當切換到 6G 測試矩陣頁面時，自動與首頁 Wizard 選擇的 6G 狀態連動過濾
+            if (tabId === 'sixg') {
+                if (document.getElementById('rad-6g-unii5').checked) {
+                    filter6GTable('unii5');
+                } else if (document.getElementById('rad-6g-unii57').checked) {
+                    filter6GTable('unii57');
+                } else {
+                    // 若首頁未選擇，預設過濾為 UNII-5 模式
+                    filter6GTable('unii5');
+                }
+            }
+        }
+
+        // 當產品 Mode 發生切換時自動連動 Checkbox
+        function onProductModeChange() {
+            const mode = document.getElementById('product-mode-select').value;
+            
+            // 預設基本款
+            document.getElementById('chk-24g').checked = true;
+            document.getElementById('chk-b1').checked = true;
+            document.getElementById('chk-b2').checked = true;
+            document.getElementById('chk-b3').checked = true;
+            document.getElementById('chk-b4').checked = true;
+            document.getElementById('chk-cross').checked = false;
+            document.getElementById('chk-combo-b4').checked = false;
+
+            if (mode === 'mode2') {
+                document.getElementById('chk-cross').checked = true;
+            } else if (mode === 'mode3') {
+                document.getElementById('chk-combo-b4').checked = true;
+            } else if (mode === 'mode4') {
+                document.getElementById('chk-b4').checked = false;
+            } else if (mode === 'mode5') {
+                document.getElementById('chk-cross').checked = true;
+                document.getElementById('chk-b4').checked = false;
+            }
+        }
+
+        // 6G 頻帶操作選擇變動
+        function on6GSelectionChange() {
+            const resultCard = document.getElementById('wizard-result-card');
+            if (!resultCard.classList.contains('hidden')) {
+                calculateEvaluation();
+            }
+        }
+
+        // 6G 測試頻道矩陣動態過濾 (精準對應 UNII-5 與 UNII 5~7)
+        function filter6GTable(type) {
+            const btnU5 = document.getElementById('btn-filter-unii5');
+            const btnU57 = document.getElementById('btn-filter-unii57');
+            const alertBox = document.getElementById('unii-filter-alert');
+            
+            if (type === 'unii5') {
+                btnU5.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-indigo-600 text-white shadow-sm";
+                btnU57.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-slate-600 hover:bg-slate-100";
+                
+                // 隱藏所有 UNII-6/7 操作頻道 (unii67-row)
+                document.querySelectorAll('.unii67-row').forEach(row => {
+                    row.classList.add('hidden');
+                });
+                // 隱藏 UNII-6/7 CBP 測項
+                document.querySelectorAll('.unii67-cbp').forEach(item => {
+                    item.classList.add('hidden');
+                });
+                
+                alertBox.innerHTML = `<strong>💡 當前已篩選：僅使用 UNII-5 (5925~6425 MHz) 操作範圍</strong>。系統已自動隱藏 UNII-6/7 操作頻道與 CBP 測項。此頻段可採用 <strong>歐規 CE 報告轉 C-tick (方式 1)</strong>，若無功率提升之需求則完全免於重新物理測試。`;
+            } else {
+                btnU57.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition-all bg-indigo-600 text-white shadow-sm";
+                btnU5.className = "px-3 py-1.5 rounded-md text-xs font-semibold transition-all text-slate-600 hover:bg-slate-100";
+                
+                // 顯示所有 UNII-6/7 操作頻道 (unii67-row)
+                document.querySelectorAll('.unii67-row').forEach(row => {
+                    row.classList.remove('hidden');
+                });
+                // 顯示所有 CBP 測項
+                document.querySelectorAll('.unii67-cbp').forEach(item => {
+                    item.classList.remove('hidden');
+                });
+                
+                alertBox.innerHTML = `<strong>💡 當前已篩選：使用 UNII 5~7 (5925~6585 MHz) 完整範圍</strong>。所有操作頻道（包括 UNII-6 & UNII-7 標示為<strong>藍色</strong>的重測與比對頻道）與 CBP 特定頻道已完整列出。依據 AS/NZS 4268，若硬體支援此範圍，轉報告時須提供此等頻道的功率比對或手動重測與特定標記。`;
+            }
+        }
+
+        // 智慧評估主計算邏輯 (精準同步 PDF 所有 Page Note 與新增 6G 兩大分流邏輯)
+        function calculateEvaluation() {
+            const has24G = document.getElementById('chk-24g').checked;
+            const hasB1 = document.getElementById('chk-b1').checked;
+            const hasB2 = document.getElementById('chk-b2').checked;
+            const hasB3 = document.getElementById('chk-b3').checked;
+            const hasB4 = document.getElementById('chk-b4').checked;
+            const hasCross = document.getElementById('chk-cross').checked;
+            const hasComboB4 = document.getElementById('chk-combo-b4').checked;
+
+            // 6GHz 新增單選判定
+            const has6GUnii5 = document.getElementById('rad-6g-unii5').checked;
+            const has6GUnii57 = document.getElementById('rad-6g-unii57').checked;
+
+            const reportType = document.querySelector('input[name="source-report"]:checked').value;
+            const deviceType = document.querySelector('input[name="device-type"]:checked').value;
+
+            // 顯示結果卡片
+            const resultCard = document.getElementById('wizard-result-card');
+            resultCard.classList.remove('hidden');
+            resultCard.scrollIntoView({ behavior: 'smooth' });
+
+            const badge = document.getElementById('result-badge-method');
+            const tbody = document.getElementById('result-table-body');
+            const dfsSection = document.getElementById('result-dfs-section');
+            const dfsList = document.getElementById('result-dfs-list');
+            const retestSection = document.getElementById('result-retest-section');
+            const retestDesc = document.getElementById('result-retest-desc');
+
+            tbody.innerHTML = ''; 
+            dfsList.innerHTML = ''; 
+            retestDesc.innerHTML = '';
+            retestSection.classList.add('hidden');
+
+            let recommendedMethod = "轉報告評估方式 1";
+            let methodBadgeColor = "bg-emerald-600";
+
+            // 實施 Note 3 強制校驗：若支援 80+80 且含 B1+B4 / B2+B4 / B3+B4 只能用方式 2 執行
+            if (hasComboB4 && reportType !== 'none') {
+                recommendedMethod = "轉報告評估方式 2 (Note 3 強制：80+80M 跨 B4 組合專用)";
+                methodBadgeColor = "bg-rose-700 animate-pulse";
+            } else if (reportType === 'none') {
+                recommendedMethod = "全新物理測試符合";
+                methodBadgeColor = "bg-rose-600";
+            } else if (reportType === 'fcc') {
+                recommendedMethod = "轉報告評估方式 2 (FCC 報告移轉)";
+                methodBadgeColor = "bg-amber-600";
+            } else if (reportType === 'ce') {
+                recommendedMethod = "轉報告評估方式 1 (CE 報告移轉)";
+                methodBadgeColor = "bg-indigo-600";
+            } else if (reportType === 'both') {
+                if (hasCross) {
+                    recommendedMethod = "轉報告評估方式 3 (混合推薦 - 支援 5G 跨頻段)";
+                    methodBadgeColor = "bg-purple-600";
+                } else {
+                    recommendedMethod = "轉報告評估方式 1 (優先使用歐規 CE 報告移轉)";
+                    methodBadgeColor = "bg-emerald-600";
+                }
+            }
+
+            badge.innerText = recommendedMethod;
+            badge.className = `px-3 py-1 text-white rounded-full text-xs font-bold tracking-wider ${methodBadgeColor}`;
+
+            let showDfsSection = false;
+
+            // 2.4G
+            if (has24G) {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-3 font-semibold text-slate-900">2.4 GHz (WLAN/BT)</td>
+                        <td class="py-3 px-3">In/Outdoor | Digital/FHSS</td>
+                        <td class="py-3 px-3">使用 ${reportType === 'fcc' ? 'FCC 15.247' : 'CE EN 300 328'} 報告符合</td>
+                        <td class="py-3 px-3">--</td>
+                        <td class="py-3 px-3 text-center text-emerald-600 font-bold">否</td>
+                    </tr>
+                `;
+            }
+
+            // Band 1
+            if (hasB1) {
+                let rfEval = "使用 CE 報告符合";
+                let needTest = "否";
+                let testColor = "text-emerald-600";
+                if (reportType === 'fcc' || (hasComboB4 && recommendedMethod.includes('方式 2'))) {
+                    rfEval = "使用 FCC 15.407 報告符合 (若為室外需重測 30 度仰角)";
+                    if (deviceType === 'outdoor') {
+                        needTest = "是 (重新測試 EIRP & 30度仰角 EIRP)";
+                        testColor = "text-rose-600";
+                        retestSection.classList.remove('hidden');
+                        retestDesc.innerHTML += `⚡ <strong>5G Band 1 (室外模式限制)</strong>: 使用 FCC 報告轉換時，室外型設備發射仰角在 30 度以上必須滿足特定 EIRP 限制，需重新執行物理測試。<br>`;
+                    }
+                }
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-3 font-semibold text-slate-900">5 GHz Band 1 (5150-5250)</td>
+                        <td class="py-3 px-3">${deviceType === 'indoor' ? 'Indoor' : 'In/Outdoor'} | RLAN</td>
+                        <td class="py-3 px-3">${rfEval}</td>
+                        <td class="py-3 px-3">--</td>
+                        <td class="py-3 px-3 text-center ${testColor} font-bold">${needTest}</td>
+                    </tr>
+                `;
+            }
+
+            // Band 2
+            if (hasB2) {
+                let rfEval = "使用 CE 報告符合";
+                let needTest = "否";
+                let testColor = "text-emerald-600";
+                if (reportType === 'fcc' || recommendedMethod.includes('方式 2')) {
+                    rfEval = "使用 FCC 報告符合 (EIRP/PSD 須調降限值)";
+                    needTest = "是 (須調降 Power & PSD 並重測)";
+                    testColor = "text-rose-600";
+                    retestSection.classList.remove('hidden');
+                    retestDesc.innerHTML += `⚡ <strong>5G Band 2 (功率調降重測)</strong>: 基於澳洲 AS/NZS 4268 要求，在 FCC 報告轉換下，發射功率與 PSD 在轉報告時通常需要調降，須重新進行實體測試驗證。<br>`;
+                }
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-3 font-semibold text-slate-900">5 GHz Band 2 (5250-5350)</td>
+                        <td class="py-3 px-3">Indoor | RLAN</td>
+                        <td class="py-3 px-3">${rfEval}</td>
+                        <td class="py-3 px-3">使用 ${reportType === 'fcc' ? 'FCC/IC' : 'CE'} 報告符合</td>
+                        <td class="py-3 px-3 text-center ${testColor} font-bold">${needTest}</td>
+                    </tr>
+                `;
+            }
+
+            // Band 3 (核心 DFS 頻段)
+            if (hasB3) {
+                let rfEval = "使用 CE 報告符合";
+                let dfsEval = "CE 轉 C-tick DFS 評估";
+                let needTest = "是";
+                let testColor = "text-rose-600";
+
+                showDfsSection = true;
+
+                if (reportType === 'fcc') {
+                    rfEval = "使用 FCC 報告符合";
+                    dfsEval = "FCC 轉 C-tick DFS 評估";
+                } else if (reportType === 'both' && hasCross) {
+                    rfEval = "使用 FCC 報告符合 (支援跨頻段)";
+                    dfsEval = "混合評估：DFS 須重測 Band 3";
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 bg-amber-50/20">
+                        <td class="py-3 px-3 font-semibold text-amber-950">5 GHz Band 3 (5470-5725)</td>
+                        <td class="py-3 px-3">${deviceType === 'indoor' ? 'Indoor' : 'In/Outdoor'} | RLAN</td>
+                        <td class="py-3 px-3">${rfEval}</td>
+                        <td class="py-3 px-3 font-semibold text-amber-800">${dfsEval}</td>
+                        <td class="py-3 px-3 text-center ${testColor} font-bold">${needTest}</td>
+                    </tr>
+                `;
+
+                // DFS 細節連動 (對應 PDF 第 1, 2 頁的 Note 1 & 2)
+                if (reportType === 'ce' || (reportType === 'both' && !hasCross)) {
+                    dfsList.innerHTML += `<li><strong>C-tick DFS 氣象雷達防禦屏蔽</strong>: 必須徹底關閉且在軟體中移除 <strong>5610, 5620, 5570 MHz</strong> 頻道。</li>`;
+                    if (deviceType === 'outdoor') {
+                        dfsList.innerHTML += `<li><strong>室外設備實測 (Note 3)</strong>: 歐規轉 C-tick 時，室外設備在 Band 3 的行為模式<strong>必須手動加測 5530 MHz (BW: 80MHz)</strong>。</li>`;
+                    } else {
+                        dfsList.innerHTML += `<li><strong>室內設備</strong>: 可直接使用 CE 報告符合，無須重測。</li>`;
+                    }
+                } else {
+                    // FCC 轉移模式
+                    dfsList.innerHTML += `<li><strong>FCC 轉 C-tick 屏蔽</strong>: 不可以使用 <strong>5570 MHz</strong> (氣象頻帶)。</li>`;
+                    if (deviceType === 'outdoor') {
+                        dfsList.innerHTML += `<li><strong>室外型加測行為模式</strong>: 必須實測加測 <strong>5530 MHz (BW: 80MHz)</strong> 頻道。</li>`;
+                    } else {
+                        dfsList.innerHTML += `<li><strong>室內型 (方式 3 跨頻段)</strong>: 因 FCC 室內 DFS 僅測試 Band 2，故 <strong>Band 3 DFS 必須重新完整物理測試</strong>。</li>`;
+                    }
+                }
+            }
+
+            // Band 4
+            if (hasB4) {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-3 font-semibold text-slate-900">5 GHz Band 4 (5725-5850)</td>
+                        <td class="py-3 px-3">In/Outdoor | Digital</td>
+                        <td class="py-3 px-3">使用 FCC 報告符合</td>
+                        <td class="py-3 px-3">--</td>
+                        <td class="py-3 px-3 text-center text-emerald-600 font-bold">否</td>
+                    </tr>
+                `;
+            }
+
+            // 6GHz 僅限 UNII-5 分流路徑評估
+            if (has6GUnii5) {
+                let rfEval = "使用 CE 報告符合 (方式 1，免重測)";
+                let needTest = "否";
+                let testColor = "text-emerald-600";
+                
+                if (reportType === 'ce' || reportType === 'both') {
+                    rfEval = "使用 CE 報告符合 (方式 1，LPI 預設功率免重測；若欲提升 LPI 功率至 23.98dBm 則需 conducted 項目全數重測)。";
+                } else if (reportType === 'fcc') {
+                    rfEval = "使用 FCC 報告符合 (須確認所有 channel 是否符合 AU Limit)";
+                    needTest = "是 (比對並標示)";
+                    testColor = "text-rose-600";
+                    retestSection.classList.remove('hidden');
+                    retestDesc.innerHTML += `⚡ <strong>6GHz UNII-5 (FCC 移轉)</strong>: 澳洲針對 6GHz 的通道有特定限制。使用 FCC 報告移轉時，必須確認所有頻道 EIRP/PSD 滿足 AS/NZS 4268 要求，並需標示 UNII-5 部分的加測數據。<br>`;
+                } else if (reportType === 'none') {
+                    rfEval = "需依方式 2 重新物理測試所有 conducted 項目";
+                    needTest = "是";
+                    testColor = "text-rose-600";
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 bg-indigo-50/10">
+                        <td class="py-3 px-3 font-semibold text-indigo-950">6 GHz UNII-5 (5925-6425)</td>
+                        <td class="py-3 px-3">LPI / VLP (僅限 UNII-5)</td>
+                        <td class="py-3 px-3">${rfEval}</td>
+                        <td class="py-3 px-3">--</td>
+                        <td class="py-3 px-3 text-center ${testColor} font-bold">${needTest}</td>
+                    </tr>
+                `;
+            }
+
+            // 6GHz 完整 UNII 5~7 分流路徑評估 (歐規不完全覆蓋，須特殊處理)
+            if (has6GUnii57) {
+                let rfEval = "使用 FCC 報告符合 (須確認所有 channel EIRP/PSD，並標示藍 channel)";
+                let needTest = "是 (比對並標示「藍色 Channel」)";
+                let testColor = "text-rose-600";
+                
+                if (reportType === 'ce') {
+                    // 歐規 CE 標準僅覆蓋 UNII-5
+                    rfEval = "CE 報告不完全覆蓋 UNII-6/7 (僅含 UNII-5)。UNII-6/7 頻道須補測或使用 FCC 報告比對。";
+                    retestSection.classList.remove('hidden');
+                    retestDesc.innerHTML += `⚡ <strong>6GHz UNII 5~7 (歐規轉移限制)</strong>: 歐規 CE 報告一般僅覆蓋 UNII-5。對於支援完整 UNII 5~7 頻段之產品，UNII-6 及 UNII-7 部分（標示為藍色之 Channel）在澳洲移轉時需使用 FCC 報告比對，否則須重新物理測試其 conducted 項目與 CBP。<br>`;
+                } else if (reportType === 'fcc' || reportType === 'both') {
+                    rfEval = "使用 FCC 報告符合 (須確認所有 channel 是否符合 AU Limit)";
+                    retestSection.classList.remove('hidden');
+                    retestDesc.innerHTML += `⚡ <strong>6GHz UNII 5~7 (FCC 移轉)</strong>: 依據 AS/NZS 4268，必須確認所有頻道 EIRP/PSD 滿足限制值，並新增表格標示「藍色 Channel」（UNII-6 & 7 測試頻道）。<br>`;
+                } else if (reportType === 'none') {
+                    rfEval = "需完全重新物理測試所有 UNII 5~7 頻道與 CBP 測項";
+                    needTest = "是";
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 bg-indigo-50/10">
+                        <td class="py-3 px-3 font-semibold text-indigo-950">6 GHz UNII 5~7 (5925-6585)</td>
+                        <td class="py-3 px-3">LPI / VLP (UNII-5~7 完整範圍)</td>
+                        <td class="py-3 px-3">${rfEval}</td>
+                        <td class="py-3 px-3">--</td>
+                        <td class="py-3 px-3 text-center ${testColor} font-bold">${needTest}</td>
+                    </tr>
+                `;
+            }
+
+            // 跨 Band 頻道 Note 2 法規限制
+            if (hasCross && reportType !== 'none') {
+                retestSection.classList.remove('hidden');
+                retestDesc.innerHTML += `⚠️ <strong>Note 2 跨頻段警示 (5720M/5710M/5690M)</strong>: 跨頻段頻道的 Band 3 部分必須使用 FCC 報告轉換或依照 EN 規範重新物理測試。<br>`;
+            }
+
+            // 完全重新測試判定
+            if (reportType === 'none') {
+                retestSection.classList.remove('hidden');
+                retestDesc.innerHTML = `
+                    🚨 <strong>完全重新物理測試判定</strong>：您尚未提供現成報告，產品必須完全依照 AS/NZS 4268 標準手動進行射頻全項測試。<br>
+                    <strong>建議對應 Sporton 標準測試模式：</strong><br>
+                    - WLAN 2.4GHz: 採用 <strong>B1/C1 模式</strong> (EN 300 328 / FCC 15.247 重新實測)。<br>
+                    - WLAN 5GHz (Band 1~3): 採用 <strong>B2 / B3 / C2 模式</strong> (包含 -10°C 至 55°C 之極端溫度發射頻寬與 Operation Frequency 加測)。<br>
+                    - WLAN 5GHz (Band 4): 採用 <strong>C3 模式</strong> (遵守 FCC 15.407 重測)。
+                `;
+                showDfsSection = false;
+            }
+
+            if (showDfsSection) {
+                dfsSection.classList.remove('hidden');
+            } else {
+                dfsSection.classList.add('hidden');
+            }
+        }
+
+        // 6GHz 評估方式快速切換
+        function select6GMethod(methodNum) {
+            document.querySelectorAll('[id^="btn-6g-"]').forEach(btn => {
+                btn.classList.remove('bg-blue-50', 'border-blue-500', 'ring-2', 'ring-blue-500/20');
+                btn.classList.add('border-slate-200', 'hover:bg-slate-50');
+            });
+            const activeBtn = document.getElementById(`btn-6g-m${methodNum}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('border-slate-200', 'hover:bg-slate-50');
+                activeBtn.classList.add('bg-blue-50', 'border-blue-500', 'ring-2', 'ring-blue-500/20');
+            }
+
+            const matrixArea = document.getElementById('sixg-matrix-area');
+            if (methodNum === 2 || methodNum === 3) {
+                matrixArea.classList.remove('hidden');
+            } else {
+                matrixArea.classList.add('hidden');
+            }
+        }
+
+        // 決策路徑分支選擇 (精準呼應 PDF 第 7 頁 flowchart)
+        function selectFlowBranch(branch) {
+            const flowResult = document.getElementById('flow-result-node');
+            const flowText = document.getElementById('flow-result-text');
+            flowResult.classList.remove('hidden');
+
+            if (branch === 'yes') {
+                flowText.innerHTML = `
+                    <p class="text-emerald-700 font-bold mb-1">✓ 直接套用轉報告模型 (轉報告評估方式 1 / 2 / 3)</p>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        您已擁有合格報告。請根據 2.4GHz 與 5GHz 是否跨頻段，選擇將其轉換至歐規 C-tick 或是美規報告微調。特定情況下僅需進行 DFS 重測或功率限值對比即可，是最省時的捷徑。
+                    </p>
+                `;
+            } else {
+                flowText.innerHTML = `
+                    <p class="text-rose-700 font-bold mb-1">✗ 判定：進入 Which test requirement (ETSI or FCC) 重新測試流程</p>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                        無現成合格報告，必須在 Sporton 實驗室選擇 ETSI 或 FCC 測試標準進行全新物理比對。
+                    </p>
+                    <div class="flex gap-2 justify-center mt-2">
+                        <button onclick="selectFlowStandard('etsi')" class="p-1 px-3 bg-blue-100 text-blue-800 rounded font-semibold text-[10px]">使用 ETSI 標準</button>
+                        <button onclick="selectFlowStandard('fcc')" class="p-1 px-3 bg-amber-100 text-amber-800 rounded font-semibold text-[10px]">使用 FCC 標準</button>
+                    </div>
+                    <div id="flow-standard-result" class="mt-2 text-[11px] text-slate-500"></div>
+                `;
+            }
+        }
+
+        function selectFlowStandard(std) {
+            const resultDiv = document.getElementById('flow-standard-result');
+            if (std === 'etsi') {
+                resultDiv.innerHTML = `
+                    <p class="font-bold text-slate-800 mt-1">選用 ETSI 驗證模式：</p>
+                    <p>確認所選用的 ETSI Standard（如 EN 300 328 / EN 301 893）是否名列於 AS/NZS 4268 的 Table 1 中：</p>
+                    <p class="text-blue-700 font-medium mt-0.5">· 是 -> 使用 Table 1 內特定的 ETSI 標準 (如 B1/B2 模式)<br>· 否 -> 使用 Clause 6.2.2 或 7.2.2 的通用 ETSI 標準</p>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <p class="font-bold text-slate-800 mt-1">選用 FCC 驗證模式：</p>
+                    <p>確認所選用的 FCC Standard（如 Part 15.247 / 15.407）是否名列於 AS/NZS 4268 的 Table 1 中：</p>
+                    <p class="text-amber-700 font-medium mt-0.5">· 是 -> 使用 Table 1 內特定的 FCC 標準 (如 C1/C2 模式)<br>· 否 -> 使用 Clause 6.2.2 或 7.2.2 的通用 FCC 標準</p>
+                `;
+            }
+        }
+
+        // 初始化
+        window.onload = function() {
+            onProductModeChange();
+        };
+    </script>
+</body>
+</html>
